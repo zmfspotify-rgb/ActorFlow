@@ -15,11 +15,16 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 4000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/actorflow';
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
+const DB_NAME = process.env.MONGODB_DB || 'actorflow';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET is required. Set it in your environment configuration.');
+}
 
 async function connectDB() {
   try {
-    await mongoose.connect(MONGODB_URI, { dbName: 'actorflow' });
+    await mongoose.connect(MONGODB_URI, { dbName: DB_NAME });
     console.log('Connected to MongoDB');
   } catch (error) {
     console.error('MongoDB connection failed (continuing with limited features):', error.message);

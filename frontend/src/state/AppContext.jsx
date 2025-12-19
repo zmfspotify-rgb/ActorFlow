@@ -22,7 +22,10 @@ export function AppProvider({ children }) {
     openFeedback: () => setAiFeedbackOpen(true),
     closeFeedback: () => setAiFeedbackOpen(false),
     addTask: (title) => {
-      const id = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `task-${Date.now()}`;
+      const id =
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
       setTasks((prev) => [...prev, { id, title, status: 'pending', due: 'Soon' }]);
     },
     deposit: (amount) => setWallet((prev) => ({ ...prev, balance: prev.balance + amount })),

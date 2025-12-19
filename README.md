@@ -12,10 +12,11 @@ Includes dashboard, tasks, wallet placeholders, AI feedback modal stub, and resp
 ## Backend
 1. `cd backend`
 2. `npm install`
-3. Create `.env` (optional) with:
+3. Create `.env` with:
    ```
    PORT=4000
    MONGODB_URI=mongodb://localhost:27017/actorflow
+   MONGODB_DB=actorflow
    JWT_SECRET=change-me
    ```
 4. `npm run dev` or `npm start`
