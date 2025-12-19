@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ActorFlow Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --panel: rgba(255, 255, 255, 0.04);
+      --card: rgba(255, 255, 255, 0.06);
+      --accent: #4fd1c5;
+      --accent-2: #c084fc;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(79, 209, 197, 0.12), transparent 30%),
+                  radial-gradient(circle at 80% 0%, rgba(192, 132, 252, 0.14), transparent 26%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
+    .pill {
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: linear-gradient(120deg, rgba(79, 209, 197, 0.16), rgba(192, 132, 252, 0.14));
+      color: var(--text);
+      font-weight: 600;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      margin: 4px 0;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .badge {
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title {
+      margin: 24px 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .tree {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+    }
+
+    .node-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .node {
+      position: relative;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 10px 24px rgba(0,0,0,0.35);
+      transition: transform 150ms ease, border-color 150ms ease;
+    }
+
+    .node:hover {
+      transform: translateY(-2px);
+      border-color: rgba(79, 209, 197, 0.4);
+    }
+
+    .node-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .node-title {
+      font-weight: 700;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      border: 1px solid var(--border);
+    }
+
+    .status.completed { background: rgba(79, 209, 197, 0.15); color: #9ef6ef; }
+    .status.unlocked { background: rgba(192, 132, 252, 0.12); color: #e0c5ff; }
+    .status.locked { background: rgba(255, 255, 255, 0.05); color: var(--muted); }
+
+    .progress {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      width: 0%;
+      border-radius: 999px;
+      transition: width 180ms ease;
+    }
+
+    .node-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .node-desc {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .action-btn {
+      padding: 14px;
+      border-radius: 12px;
+      background: linear-gradient(120deg, rgba(79, 209, 197, 0.14), rgba(192, 132, 252, 0.12));
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 140ms ease, box-shadow 140ms ease;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.28);
+    }
+
+    .recommended {
+      display: grid;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .pill-soft {
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(79, 209, 197, 0.12);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    @media (max-width: 720px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .node-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <div class="title">ActorFlow – Performer Dashboard</div>
+        <div class="subtitle">Track your acting skill journey and jump into today's drills.</div>
+      </div>
+      <div class="pill">Daily Streak: <strong id="streak-count">12</strong> 🔥</div>
+    </header>
+
+    <section class="grid" id="stat-cards">
+      <div class="card">
+        <h3>XP</h3>
+        <div class="stat-value" id="xp">4,820</div>
+        <div class="muted">Earn XP by finishing drills & scenes.</div>
+      </div>
+      <div class="card">
+        <h3>Badges</h3>
+        <div class="badge-row" id="badges"></div>
+        <div class="muted">Collect badges as you master skills.</div>
+      </div>
+      <div class="card" id="next-drill-card">
+        <h3>Next Recommended Drill</h3>
+        <div class="recommended">
+          <div id="next-drill-skill" class="pill-soft"></div>
+          <div id="next-drill-desc" class="muted"></div>
+          <a class="action-btn" id="start-drill">Start Drill</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-title">Acting Skill Tech Tree</div>
+    <section class="tree" id="skill-tree"></section>
+
+    <div class="section-title">Quick Actions</div>
+    <div class="actions">
+      <a class="action-btn" href="#skill-tree">🎯 Daily Drills</a>
+      <a class="action-btn" href="#script-library">📜 Script Library</a>
+      <a class="action-btn" href="#recorded-scenes">🎬 Recorded Scenes</a>
+    </div>
+
+    <div class="section-title" id="script-library">Script Library</div>
+    <div class="card">
+      <h3>Organize your sides</h3>
+      <p class="muted">Collect scenes and monologues you are working on, so you can attach drills and notes as you progress.</p>
+    </div>
+
+    <div class="section-title" id="recorded-scenes">Recorded Scenes</div>
+    <div class="card">
+      <h3>Review your takes</h3>
+      <p class="muted">Keep clips of on-camera drills and performances together, alongside feedback and timestamps.</p>
+    </div>
+  </div>
+
+  <script>
+    const user = {
+      streak: 12,
+      xp: 4820,
+      badges: [
+        { name: 'Warmup Warrior', icon: '🔥' },
+        { name: 'Vocal Virtuoso', icon: '🎤' },
+        { name: 'Scene Stealer', icon: '🎭' },
+        { name: 'Camera Ready', icon: '🎥' },
+      ],
+    };
+
+    const skills = [
+      { name: 'Voice', progress: 100, desc: 'Breath, projection, and articulation drills.', drill: 'Resonance ladder & breath flow', icon: '🎤' },
+      { name: 'Body', progress: 85, desc: 'Physical awareness, posture, and gesture clarity.', drill: 'Precision walk & gesture map', icon: '🩰' },
+      { name: 'Emotional Control', progress: 60, desc: 'Emotional truth, substitution, and tempo rhythm.', drill: 'Beat shifts with sensory recall', icon: '💠' },
+      { name: 'Scene Acting', progress: 35, desc: 'Scene analysis, objectives, and tactics.', drill: 'Obstacle/need layering in a 2-min scene', icon: '🎭' },
+      { name: 'Screen Acting', progress: 10, desc: 'Camera eyelines, marks, and subtlety.', drill: 'Two-take reaction exercise on camera', icon: '🎥' },
+      { name: 'Audition Prep', progress: 0, desc: 'Self-tapes, slates, and cold reads.', drill: 'One-minute cold read with self-tape setup', icon: '🎬' },
+    ];
+    const SKILLS_PER_ROW = 3;
+
+    const streakEl = document.getElementById('streak-count');
+    const xpEl = document.getElementById('xp');
+    const badgesEl = document.getElementById('badges');
+    const treeEl = document.getElementById('skill-tree');
+    const nextDrillSkill = document.getElementById('next-drill-skill');
+    const nextDrillDesc = document.getElementById('next-drill-desc');
+    const startDrill = document.getElementById('start-drill');
+
+    streakEl.textContent = user.streak;
+    xpEl.textContent = user.xp.toLocaleString();
+
+    badgesEl.innerHTML = user.badges.map(b => (
+      `<span class="badge">${b.icon} ${b.name}</span>`
+    )).join('');
+
+    function buildNode(skill, index) {
+      const previousComplete = index === 0 || skills[index - 1].progress >= 100;
+      let status = 'locked';
+      if (skill.progress >= 100) status = 'completed';
+      else if (previousComplete) status = 'unlocked';
+
+      const statusLabel = status === 'completed' ? 'Completed'
+        : status === 'unlocked' ? 'Unlocked'
+        : 'Locked';
+
+      const lockedOverlay = status === 'locked' ? '<div class="muted" style="font-size:13px;">Unlock the previous skill to access drills.</div>' : '';
+
+      return `
+        <div class="node">
+          <div class="node-header">
+            <div class="node-title">${skill.icon} ${skill.name}</div>
+            <div class="status ${status}">${statusLabel}</div>
+          </div>
+          <p class="node-desc">${skill.desc}</p>
+          <div class="progress"><div class="progress-bar" style="width:${skill.progress}%"></div></div>
+          <div class="node-footer">
+            <span>${skill.progress}% complete</span>
+            <span>${status === 'locked' ? 'Locked' : 'Next drill ready'}</span>
+          </div>
+          ${lockedOverlay}
+        </div>
+      `;
+    }
+
+    function renderTree() {
+      treeEl.innerHTML = '';
+      const rows = [];
+      for (let i = 0; i < skills.length; i += SKILLS_PER_ROW) {
+        const chunk = skills.slice(i, i + SKILLS_PER_ROW);
+        rows.push(`<div class="node-row">${chunk.map((s, idx) => buildNode(s, i + idx)).join('')}</div>`);
+      }
+      treeEl.innerHTML = rows.join('');
+    }
+
+    function findNextSkill() {
+      const unlocked = skills.find((s, idx) => s.progress < 100 && (idx === 0 || skills[idx - 1].progress >= 100));
+      if (unlocked) return unlocked;
+      const incomplete = skills.find(s => s.progress < 100);
+      return incomplete || skills[skills.length - 1];
+    }
+
+    function setNextDrill() {
+      const nextSkill = findNextSkill();
+      nextDrillSkill.textContent = `${nextSkill.icon} ${nextSkill.name}`;
+      nextDrillDesc.textContent = nextSkill.drill;
+      startDrill.href = '#skill-tree';
+      startDrill.textContent = `Start ${nextSkill.name} Drill`;
+    }
+
+    renderTree();
+    setNextDrill();
+  </script>
+</body>
+</html>
