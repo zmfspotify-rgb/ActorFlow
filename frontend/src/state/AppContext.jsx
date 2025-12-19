@@ -8,6 +8,11 @@ const seedTasks = [
   { id: 't3', title: 'Camera eyeline drill', status: 'pending', due: 'Fri' },
 ];
 
+const createTaskId = () =>
+  typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
 export function AppProvider({ children }) {
   const [tasks, setTasks] = useState(seedTasks);
   const [wallet, setWallet] = useState({ balance: 120, currency: 'USD' });
@@ -22,11 +27,7 @@ export function AppProvider({ children }) {
     openFeedback: () => setAiFeedbackOpen(true),
     closeFeedback: () => setAiFeedbackOpen(false),
     addTask: (title) => {
-      const id =
-        typeof crypto !== 'undefined' && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-      setTasks((prev) => [...prev, { id, title, status: 'pending', due: 'Soon' }]);
+      setTasks((prev) => [...prev, { id: createTaskId(), title, status: 'pending', due: 'Soon' }]);
     },
     deposit: (amount) => setWallet((prev) => ({ ...prev, balance: prev.balance + amount })),
     withdraw: (amount) => setWallet((prev) => ({ ...prev, balance: Math.max(0, prev.balance - amount) })),

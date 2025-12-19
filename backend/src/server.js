@@ -19,7 +19,11 @@ const DB_NAME = process.env.MONGODB_DB || 'actorflow';
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET is required. Set it in your environment configuration.');
+  throw new Error('Missing JWT_SECRET environment variable (e.g., set JWT_SECRET=your-strong-secret in .env).');
+}
+
+if (!/^[a-zA-Z0-9-_]+$/.test(DB_NAME)) {
+  throw new Error('Invalid MONGODB_DB value. Use alphanumeric characters, dash, or underscore.');
 }
 
 async function connectDB() {

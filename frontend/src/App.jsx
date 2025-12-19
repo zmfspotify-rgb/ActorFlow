@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { AppProvider, useAppState } from './state/AppContext.jsx';
 
 const navItems = [
@@ -31,7 +31,6 @@ function StatusBadge({ status }) {
 function TasksSection() {
   const { tasks, addTask, openFeedback } = useAppState();
   const [newTask, setNewTask] = useState('');
-  const orderedTasks = useMemo(() => tasks, [tasks]);
 
   return (
     <section id="tasks" className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl shadow-black/30">
@@ -49,7 +48,7 @@ function TasksSection() {
         </button>
       </div>
       <div className="mt-4 grid gap-3">
-        {orderedTasks.map((task) => (
+        {tasks.map((task) => (
           <div key={task.id} className="flex flex-col gap-2 rounded-xl border border-slate-800 bg-slate-950/40 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="font-semibold text-white">{task.title}</div>
