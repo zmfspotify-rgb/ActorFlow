@@ -23,7 +23,8 @@ export function AppProvider({ children }) {
     openFeedback: () => setAiFeedbackOpen(true),
     closeFeedback: () => setAiFeedbackOpen(false),
     addTask: (title) => {
-      const due = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date());
+      const dueDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      const due = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(dueDate);
       setTasks((prev) => [...prev, { id: createTaskId(), title, status: 'pending', due }]);
     },
     deposit: (amount) => setWallet((prev) => ({ ...prev, balance: prev.balance + amount })),

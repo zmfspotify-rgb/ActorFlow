@@ -22,3 +22,7 @@ Includes dashboard, tasks, wallet placeholders, AI feedback modal stub, and resp
 4. `npm run dev` or `npm start`
 
 API routes: `/api/register`, `/api/login`, `/api/tasks`, `/api/wallet`, plus `/health`. Tasks and wallet responses are placeholder-friendly and ready for future AI integrations.
+
+### API shape (Day 1 placeholders)
+- `/api/tasks` → `{ tasks: Task[], aiFeedbackPlaceholder: boolean, note: string }` where `Task` includes `title`, `status`, `notes`, `userId`, timestamps. `aiFeedbackPlaceholder` marks the slot for future AI critiques.
+- `/api/wallet` → `{ balance: number, currency: string, history: [{ id, type, amount, note }], instantTransferPlaceholder: boolean }` to be replaced with persisted balances/transactions later.
