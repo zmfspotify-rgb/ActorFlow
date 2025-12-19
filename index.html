@@ -290,7 +290,7 @@
         <div class="badge-row" id="badges"></div>
         <div class="muted">Collect badges as you master skills.</div>
       </div>
-      <div class="card">
+      <div class="card" id="next-drill-card">
         <h3>Next Recommended Drill</h3>
         <div class="recommended">
           <div id="next-drill-skill" class="pill-soft"></div>
@@ -305,9 +305,21 @@
 
     <div class="section-title">Quick Actions</div>
     <div class="actions">
-      <a class="action-btn" href="#">🎯 Daily Drills</a>
-      <a class="action-btn" href="#">📜 Script Library</a>
-      <a class="action-btn" href="#">🎬 Recorded Scenes</a>
+      <a class="action-btn" href="#skill-tree">🎯 Daily Drills</a>
+      <a class="action-btn" href="#script-library">📜 Script Library</a>
+      <a class="action-btn" href="#recorded-scenes">🎬 Recorded Scenes</a>
+    </div>
+
+    <div class="section-title" id="script-library">Script Library</div>
+    <div class="card">
+      <h3>Organize your sides</h3>
+      <p class="muted">Collect scenes and monologues you are working on, so you can attach drills and notes as you progress.</p>
+    </div>
+
+    <div class="section-title" id="recorded-scenes">Recorded Scenes</div>
+    <div class="card">
+      <h3>Review your takes</h3>
+      <p class="muted">Keep clips of on-camera drills and performances together, alongside feedback and timestamps.</p>
     </div>
   </div>
 
@@ -331,6 +343,7 @@
       { name: 'Screen Acting', progress: 10, desc: 'Camera eyelines, marks, and subtlety.', drill: 'Two-take reaction exercise on camera', icon: '🎥' },
       { name: 'Audition Prep', progress: 0, desc: 'Self-tapes, slates, and cold reads.', drill: 'One-minute cold read with self-tape setup', icon: '🎬' },
     ];
+    const SKILLS_PER_ROW = 3;
 
     const streakEl = document.getElementById('streak-count');
     const xpEl = document.getElementById('xp');
@@ -379,18 +392,25 @@
     function renderTree() {
       treeEl.innerHTML = '';
       const rows = [];
-      for (let i = 0; i < skills.length; i += 3) {
-        const chunk = skills.slice(i, i + 3);
+      for (let i = 0; i < skills.length; i += SKILLS_PER_ROW) {
+        const chunk = skills.slice(i, i + SKILLS_PER_ROW);
         rows.push(`<div class="node-row">${chunk.map((s, idx) => buildNode(s, i + idx)).join('')}</div>`);
       }
       treeEl.innerHTML = rows.join('');
     }
 
+    function findNextSkill() {
+      const unlocked = skills.find((s, idx) => s.progress < 100 && (idx === 0 || skills[idx - 1].progress >= 100));
+      if (unlocked) return unlocked;
+      const incomplete = skills.find(s => s.progress < 100);
+      return incomplete || skills[skills.length - 1];
+    }
+
     function setNextDrill() {
-      const nextSkill = skills.find((s, idx) => s.progress < 100 && (idx === 0 || skills[idx - 1].progress >= 100)) || skills.find(s => s.progress < 100) || skills[skills.length - 1];
+      const nextSkill = findNextSkill();
       nextDrillSkill.textContent = `${nextSkill.icon} ${nextSkill.name}`;
       nextDrillDesc.textContent = nextSkill.drill;
-      startDrill.href = '#';
+      startDrill.href = '#skill-tree';
       startDrill.textContent = `Start ${nextSkill.name} Drill`;
     }
 
