@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 import { User } from './models/User.js';
 import { Task } from './models/Task.js';
 
@@ -26,6 +27,13 @@ if (!/^[a-zA-Z0-9-_]+$/.test(DB_NAME)) {
   throw new Error('Invalid MONGODB_DB value. Use alphanumeric characters, dash, or underscore.');
 }
 
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 async function connectDB() {
   try {
     await mongoose.connect(MONGODB_URI, { dbName: DB_NAME });
@@ -40,6 +48,8 @@ connectDB();
 function createToken(userId) {
   return jwt.sign({ sub: userId }, JWT_SECRET, { expiresIn: '7d' });
 }
+
+app.use('/api', apiLimiter);
 
 async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization || '';
