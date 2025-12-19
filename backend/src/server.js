@@ -91,6 +91,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/tasks', authMiddleware, async (req, res) => {
   try {
     const tasks = await Task.find({ userId: req.userId }).sort({ createdAt: -1 }).lean();
+    // TODO: Replace placeholder flags with real AI feedback payload once integrated and document the contract.
     res.json({
       tasks,
       aiFeedbackPlaceholder: true,
@@ -115,6 +116,7 @@ app.post('/api/tasks', authMiddleware, async (req, res) => {
 
 app.get('/api/wallet', authMiddleware, async (req, res) => {
   try {
+    // TODO: Replace stubbed wallet values with persisted balances and transaction history.
     res.json({
       balance: 120,
       currency: 'USD',

@@ -23,7 +23,8 @@ export function AppProvider({ children }) {
     openFeedback: () => setAiFeedbackOpen(true),
     closeFeedback: () => setAiFeedbackOpen(false),
     addTask: (title) => {
-      setTasks((prev) => [...prev, { id: createTaskId(), title, status: 'pending', due: 'Soon' }]);
+      const due = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date());
+      setTasks((prev) => [...prev, { id: createTaskId(), title, status: 'pending', due }]);
     },
     deposit: (amount) => setWallet((prev) => ({ ...prev, balance: prev.balance + amount })),
     withdraw: (amount) => setWallet((prev) => ({ ...prev, balance: Math.max(0, prev.balance - amount) })),
