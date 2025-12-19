@@ -1,4 +1,5 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
+import { createTaskId } from '../utils/id.js';
 
 const AppContext = createContext(null);
 
@@ -8,18 +9,13 @@ const seedTasks = [
   { id: 't3', title: 'Camera eyeline drill', status: 'pending', due: 'Fri' },
 ];
 
-const createTaskId = () =>
-  typeof crypto !== 'undefined' && crypto.randomUUID
-    ? crypto.randomUUID()
-    : `task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
 export function AppProvider({ children }) {
   const [tasks, setTasks] = useState(seedTasks);
   const [wallet, setWallet] = useState({ balance: 120, currency: 'USD' });
   const [actorStatus] = useState('Building screen acting subtlety and audition readiness.');
   const [aiFeedbackOpen, setAiFeedbackOpen] = useState(false);
 
-  const value = useMemo(() => ({
+  const value = {
     tasks,
     wallet,
     actorStatus,
@@ -31,7 +27,7 @@ export function AppProvider({ children }) {
     },
     deposit: (amount) => setWallet((prev) => ({ ...prev, balance: prev.balance + amount })),
     withdraw: (amount) => setWallet((prev) => ({ ...prev, balance: Math.max(0, prev.balance - amount) })),
-  }), [tasks, wallet, actorStatus, aiFeedbackOpen]);
+  };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
